@@ -36,7 +36,7 @@ output
 
 ## 21.2.1 Exercises
 1. Write for loops to:
-  1. Compute the mean of every column in *mtcars*
+  - Compute the mean of every column in *mtcars*
 ```{r}
 mt.mean <- vector()
 for (var in names(mtcars)) {
@@ -44,7 +44,7 @@ for (var in names(mtcars)) {
 }
 mt.mean
 ```
- 1. Determine the type of each column in *nycflights13::flights*
+ - Determine the type of each column in *nycflights13::flights*
 ```{r}
 flt <- nycflights13::flights
 flt.type <- vector()
@@ -53,7 +53,7 @@ for (xvar in names(flt)) {
 }
 flt.type
 ```
-  1. Compute the number of unique values in each column of *iris*
+  - Compute the number of unique values in each column of *iris*
 ```{r}
 num_unique_col <- vector()
 for (xvar in names(iris)) {
