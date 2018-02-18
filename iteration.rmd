@@ -62,7 +62,7 @@ for (xvar in names(iris)) {
 num_unique_col
 ```
 
- 1. Generate 10 random normals for each of $\mu = -10, 0, 10, and 100$ 
+ - Generate 10 random normals for each of $\mu = -10, 0, 10, and 100$ 
 ```{r}
 mus <- c(-10, 0, 10, 100)
 l <- vector('list')
