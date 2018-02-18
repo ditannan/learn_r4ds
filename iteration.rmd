@@ -1,0 +1,74 @@
+---
+title: "Iteration"
+author: "Xzm"
+date: "2018年2月18日"
+output: html_document
+---
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("magrittr")
+```
+
+```{r}
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+```
+## compute the median of each column
+```{r}
+median(df$a)
+median(df$b)
+median(df$c)
+median(df$d)
+```
+
+## never copy and paste more than twice
+```{r}
+output <- vector('double', ncol(df)) # 1. output
+for (i in seq_along(df)) {           # 2. sequence
+  output[[i]] <- median(df[[i]])     # 3. body
+}
+output
+```
+
+## 21.2.1 Exercises
+1. Write for loops to:
+  1. Compute the mean of every column in *mtcars*
+```{r}
+mt.mean <- vector()
+for (var in names(mtcars)) {
+  mt.mean[[paste0(var, '.mean')]] <- mean(mtcars[[var]], na.rm = TRUE)
+}
+mt.mean
+```
+ 1. Determine the type of each column in *nycflights13::flights*
+```{r}
+flt <- nycflights13::flights
+flt.type <- vector()
+for (xvar in names(flt)) {
+  flt.type[[xvar]] <- typeof(flt[[xvar]])
+}
+flt.type
+```
+  1. Compute the number of unique values in each column of *iris*
+```{r}
+num_unique_col <- vector()
+for (xvar in names(iris)) {
+  num_unique_col[[xvar]] <- unique(iris[[xvar]]) %>% length()
+}
+num_unique_col
+```
+
+ 1. Generate 10 random normals for each of $\mu = -10, 0, 10, and 100$ 
+```{r}
+mus <- c(-10, 0, 10, 100)
+l <- vector('list')
+for (mu in mus) {
+  l[[paste0('mu = ', mu)]] <- rnorm(10, mean = mu)
+}
+l
+```
+ 
