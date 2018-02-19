@@ -26,7 +26,7 @@ median(df$d)
 ```
 
 ## never copy and paste more than twice
-```{r}
+```{r median of columns}
 output <- vector('double', ncol(df)) # 1. output
 for (i in seq_along(df)) {           # 2. sequence
   output[[i]] <- median(df[[i]])     # 3. body
@@ -37,7 +37,7 @@ output
 ## 21.2.1 Exercises
 1. Write for loops to:
   - Compute the mean of every column in *mtcars*
-```{r}
+```{r mean of columns}
 mt.mean <- vector()
 for (var in names(mtcars)) {
   mt.mean[[paste0(var, '.mean')]] <- mean(mtcars[[var]], na.rm = TRUE)
@@ -45,7 +45,7 @@ for (var in names(mtcars)) {
 mt.mean
 ```
  - Determine the type of each column in *nycflights13::flights*
-```{r}
+```{r type of columns}
 flt <- nycflights13::flights
 flt.type <- vector()
 for (xvar in names(flt)) {
@@ -54,7 +54,7 @@ for (xvar in names(flt)) {
 flt.type
 ```
   - Compute the number of unique values in each column of *iris*
-```{r}
+```{r n of unique}
 num_unique_col <- vector()
 for (xvar in names(iris)) {
   num_unique_col[[xvar]] <- unique(iris[[xvar]]) %>% length()
@@ -63,7 +63,7 @@ num_unique_col
 ```
 
  - Generate 10 random normals for each of $\mu = -10, 0, 10, and 100$ 
-```{r}
+```{r random numbers}
 mus <- c(-10, 0, 10, 100)
 l <- vector('list')
 for (mu in mus) {
@@ -72,3 +72,15 @@ for (mu in mus) {
 l
 ```
  
+## column summary
+```{r col_summary}
+col_summary <- function(df, fun) {
+  out <- vector()
+  for (i in seq_along(df)) {
+    out[[i]] <- fun(df[[i]])
+  }
+  names(out) <- names(df)
+  out
+}
+```
+
