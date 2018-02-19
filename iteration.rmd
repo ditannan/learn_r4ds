@@ -82,5 +82,6 @@ col_summary <- function(df, fun) {
   names(out) <- names(df)
   out
 }
+col_summary(mtcars, mean)
 ```
 
