@@ -320,14 +320,14 @@ library(&quot;magrittr&quot;)</code></pre>
 )</code></pre>
 <section id="compute-the-median-of-each-column" class="level2">
 <h2>compute the median of each column</h2>
-<pre class="r"><code>median(df$a)</code></pre>
-<pre><code>## [1] -0.1449515</code></pre>
-<pre class="r"><code>median(df$b)</code></pre>
-<pre><code>## [1] -1.229585</code></pre>
-<pre class="r"><code>median(df$c)</code></pre>
-<pre><code>## [1] 0.01393818</code></pre>
-<pre class="r"><code>median(df$d)</code></pre>
-<pre><code>## [1] 0.4563159</code></pre>
+<pre class="r"><code>median(df$a)
+#&gt; [1] -0.5103426
+median(df$b)
+#&gt; [1] 0.2124157
+median(df$c)
+#&gt; [1] 0.2462326
+median(df$d)
+#&gt; [1] -0.3760143</code></pre>
 </section>
 <section id="never-copy-and-paste-more-than-twice" class="level2">
 <h2>never copy and paste more than twice</h2>
@@ -335,8 +335,8 @@ library(&quot;magrittr&quot;)</code></pre>
 for (i in seq_along(df)) {           # 2. sequence
   output[[i]] &lt;- median(df[[i]])     # 3. body
 }
-output</code></pre>
-<pre><code>## [1] -0.14495147 -1.22958493  0.01393818  0.45631592</code></pre>
+output
+#&gt; [1] -0.5103426  0.2124157  0.2462326 -0.3760143</code></pre>
 </section>
 <section id="exercises" class="level2">
 <h2>21.2.1 Exercises</h2>
@@ -350,11 +350,11 @@ output</code></pre>
 for (var in names(mtcars)) {
   mt.mean[[paste0(var, '.mean')]] &lt;- mean(mtcars[[var]], na.rm = TRUE)
 }
-mt.mean</code></pre>
-<pre><code>##   mpg.mean   cyl.mean  disp.mean    hp.mean  drat.mean    wt.mean 
-##  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
-##  qsec.mean    vs.mean    am.mean  gear.mean  carb.mean 
-##  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
+mt.mean
+#&gt;   mpg.mean   cyl.mean  disp.mean    hp.mean  drat.mean    wt.mean 
+#&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
+#&gt;  qsec.mean    vs.mean    am.mean  gear.mean  carb.mean 
+#&gt;  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
 <ul>
 <li>Determine the type of each column in <em>nycflights13::flights</em></li>
 </ul>
@@ -363,15 +363,15 @@ flt.type &lt;- vector()
 for (xvar in names(flt)) {
   flt.type[[xvar]] &lt;- typeof(flt[[xvar]])
 }
-flt.type</code></pre>
-<pre><code>##           year          month            day       dep_time sched_dep_time 
-##      &quot;integer&quot;      &quot;integer&quot;      &quot;integer&quot;      &quot;integer&quot;      &quot;integer&quot; 
-##      dep_delay       arr_time sched_arr_time      arr_delay        carrier 
-##       &quot;double&quot;      &quot;integer&quot;      &quot;integer&quot;       &quot;double&quot;    &quot;character&quot; 
-##         flight        tailnum         origin           dest       air_time 
-##      &quot;integer&quot;    &quot;character&quot;    &quot;character&quot;    &quot;character&quot;       &quot;double&quot; 
-##       distance           hour         minute      time_hour 
-##       &quot;double&quot;       &quot;double&quot;       &quot;double&quot;       &quot;double&quot;</code></pre>
+flt.type
+#&gt;           year          month            day       dep_time sched_dep_time 
+#&gt;      &quot;integer&quot;      &quot;integer&quot;      &quot;integer&quot;      &quot;integer&quot;      &quot;integer&quot; 
+#&gt;      dep_delay       arr_time sched_arr_time      arr_delay        carrier 
+#&gt;       &quot;double&quot;      &quot;integer&quot;      &quot;integer&quot;       &quot;double&quot;    &quot;character&quot; 
+#&gt;         flight        tailnum         origin           dest       air_time 
+#&gt;      &quot;integer&quot;    &quot;character&quot;    &quot;character&quot;    &quot;character&quot;       &quot;double&quot; 
+#&gt;       distance           hour         minute      time_hour 
+#&gt;       &quot;double&quot;       &quot;double&quot;       &quot;double&quot;       &quot;double&quot;</code></pre>
 <ul>
 <li>Compute the number of unique values in each column of <em>iris</em></li>
 </ul>
@@ -379,9 +379,9 @@ flt.type</code></pre>
 for (xvar in names(iris)) {
   num_unique_col[[xvar]] &lt;- unique(iris[[xvar]]) %&gt;% length()
 }
-num_unique_col</code></pre>
-<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width      Species 
-##           35           23           43           22            3</code></pre>
+num_unique_col
+#&gt; Sepal.Length  Sepal.Width Petal.Length  Petal.Width      Species 
+#&gt;           35           23           43           22            3</code></pre>
 <ul>
 <li>Generate 10 random normals for each of <span class="math inline">\(\mu = -10, 0, 10, and 100\)</span></li>
 </ul>
@@ -390,22 +390,22 @@ l &lt;- vector('list')
 for (mu in mus) {
   l[[paste0('mu = ', mu)]] &lt;- rnorm(10, mean = mu)
 }
-l</code></pre>
-<pre><code>## $`mu = -10`
-##  [1] -10.239908  -9.105818  -9.639404 -12.814725 -10.400109 -10.884773
-##  [7]  -8.089345  -9.019704  -9.463458  -7.838592
-## 
-## $`mu = 0`
-##  [1] -0.2700442  1.0387950  0.1186028  0.5446553 -0.2295720  1.3332228
-##  [7]  0.1443626 -0.7541534 -0.8045793  0.4526519
-## 
-## $`mu = 10`
-##  [1] 11.34298 11.02332 10.34130 10.19909 10.18912 10.25072 10.00530
-##  [8]  7.56790 11.56177 10.68956
-## 
-## $`mu = 100`
-##  [1] 101.72487  98.29071 101.22469 101.12361  99.64563 100.41084 101.96915
-##  [8]  98.83391  99.14362  98.94125</code></pre>
+l
+#&gt; $`mu = -10`
+#&gt;  [1]  -9.745002 -10.553238  -8.594891 -10.795461 -11.566514 -11.040579
+#&gt;  [7]  -8.980066 -10.702082  -9.026684 -10.076818
+#&gt; 
+#&gt; $`mu = 0`
+#&gt;  [1]  0.8929249245 -0.7775030885  0.4367971056  0.4134439348  0.9763417720
+#&gt;  [6]  1.1465004990  1.2172716875  0.0004800131  0.7551250562  0.3424035105
+#&gt; 
+#&gt; $`mu = 10`
+#&gt;  [1] 10.168473 11.397067  9.320905 10.737629  9.139276 10.421230 11.450543
+#&gt;  [8] 10.194392  9.308795 11.339860
+#&gt; 
+#&gt; $`mu = 100`
+#&gt;  [1] 102.73611  99.05590  98.21894  99.28394 100.91108  99.22781  99.21792
+#&gt;  [8]  99.56780  99.33244 101.38951</code></pre>
 </section>
 <section id="column-summary" class="level2">
 <h2>column summary</h2>
@@ -417,11 +417,11 @@ l</code></pre>
   names(out) &lt;- names(df)
   out
 }
-col_summary(mtcars, mean)</code></pre>
-<pre><code>##        mpg        cyl       disp         hp       drat         wt 
-##  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
-##       qsec         vs         am       gear       carb 
-##  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
+col_summary(mtcars, mean)
+#&gt;        mpg        cyl       disp         hp       drat         wt 
+#&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
+#&gt;       qsec         vs         am       gear       carb 
+#&gt;  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
 </section>
 
 
