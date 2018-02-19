@@ -321,13 +321,13 @@ library(&quot;magrittr&quot;)</code></pre>
 <section id="compute-the-median-of-each-column" class="level2">
 <h2>compute the median of each column</h2>
 <pre class="r"><code>median(df$a)</code></pre>
-<pre><code>## [1] -0.05392519</code></pre>
+<pre><code>## [1] -0.1449515</code></pre>
 <pre class="r"><code>median(df$b)</code></pre>
-<pre><code>## [1] 0.4635881</code></pre>
+<pre><code>## [1] -1.229585</code></pre>
 <pre class="r"><code>median(df$c)</code></pre>
-<pre><code>## [1] 0.1353198</code></pre>
+<pre><code>## [1] 0.01393818</code></pre>
 <pre class="r"><code>median(df$d)</code></pre>
-<pre><code>## [1] 0.05909448</code></pre>
+<pre><code>## [1] 0.4563159</code></pre>
 </section>
 <section id="never-copy-and-paste-more-than-twice" class="level2">
 <h2>never copy and paste more than twice</h2>
@@ -336,7 +336,7 @@ for (i in seq_along(df)) {           # 2. sequence
   output[[i]] &lt;- median(df[[i]])     # 3. body
 }
 output</code></pre>
-<pre><code>## [1] -0.05392519  0.46358807  0.13531984  0.05909448</code></pre>
+<pre><code>## [1] -0.14495147 -1.22958493  0.01393818  0.45631592</code></pre>
 </section>
 <section id="exercises" class="level2">
 <h2>21.2.1 Exercises</h2>
@@ -392,20 +392,20 @@ for (mu in mus) {
 }
 l</code></pre>
 <pre><code>## $`mu = -10`
-##  [1]  -9.040942  -8.449459  -9.464529  -9.537874  -9.794003  -8.772762
-##  [7] -11.511744  -9.178736 -10.162143  -8.625673
+##  [1] -10.239908  -9.105818  -9.639404 -12.814725 -10.400109 -10.884773
+##  [7]  -8.089345  -9.019704  -9.463458  -7.838592
 ## 
 ## $`mu = 0`
-##  [1]  0.1670698 -0.8107002 -1.3910809  2.0461067 -0.3867000 -0.3511646
-##  [7]  1.6402101 -2.0827145 -1.1493313  0.5595744
+##  [1] -0.2700442  1.0387950  0.1186028  0.5446553 -0.2295720  1.3332228
+##  [7]  0.1443626 -0.7541534 -0.8045793  0.4526519
 ## 
 ## $`mu = 10`
-##  [1]  9.007260  9.974063 10.992052 10.495578  8.695585 10.729491 10.210185
-##  [8]  9.805524  7.872665 10.598925
+##  [1] 11.34298 11.02332 10.34130 10.19909 10.18912 10.25072 10.00530
+##  [8]  7.56790 11.56177 10.68956
 ## 
 ## $`mu = 100`
-##  [1]  98.66019 100.26148  98.93969  99.28280  99.40793  99.30193  99.57651
-##  [8]  99.86067  98.98541  99.43778</code></pre>
+##  [1] 101.72487  98.29071 101.22469 101.12361  99.64563 100.41084 101.96915
+##  [8]  98.83391  99.14362  98.94125</code></pre>
 </section>
 <section id="column-summary" class="level2">
 <h2>column summary</h2>
@@ -416,7 +416,12 @@ l</code></pre>
   }
   names(out) &lt;- names(df)
   out
-}</code></pre>
+}
+col_summary(mtcars, mean)</code></pre>
+<pre><code>##        mpg        cyl       disp         hp       drat         wt 
+##  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
+##       qsec         vs         am       gear       carb 
+##  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
 </section>
 
 
