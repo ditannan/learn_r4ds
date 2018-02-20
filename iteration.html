@@ -410,17 +410,20 @@ l
 <section id="column-summary" class="level2">
 <h2>column summary</h2>
 <pre class="r"><code>col_summary &lt;- function(df, fun) {
+#  namefun &lt;- fun
+  funname &lt;- enquo(fun)
   out &lt;- vector()
   for (i in seq_along(df)) {
     out[[i]] &lt;- fun(df[[i]])
   }
-  names(out) &lt;- names(df)
+  
+  names(out) &lt;- paste0(names(df),'.', quo_name(funname))
   out
 }
 col_summary(mtcars, mean)
-#&gt;        mpg        cyl       disp         hp       drat         wt 
+#&gt;   mpg.mean   cyl.mean  disp.mean    hp.mean  drat.mean    wt.mean 
 #&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
-#&gt;       qsec         vs         am       gear       carb 
+#&gt;  qsec.mean    vs.mean    am.mean  gear.mean  carb.mean 
 #&gt;  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
 </section>
 
