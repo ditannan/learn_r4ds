@@ -81,11 +81,14 @@ l
 ## column summary
 ```{r col_summary}
 col_summary <- function(df, fun) {
+#  namefun <- fun
+  funname <- enquo(fun)
   out <- vector()
   for (i in seq_along(df)) {
     out[[i]] <- fun(df[[i]])
   }
-  names(out) <- names(df)
+  
+  names(out) <- paste0(names(df),'.', quo_name(funname))
   out
 }
 col_summary(mtcars, mean)
