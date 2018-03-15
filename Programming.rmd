@@ -1,7 +1,17 @@
 ---
 title: "Programming"
 author: "Xzm"
-date: "2018年2月19日"
-output: html_document
+date: "2018/2/19"
+documentclass: ctexart
+output:
+  pdf_document: 
+    latex_engine: xelatex
+    template: !expr rticles::ctex_template()
+  html_document: default
 ---
 
+# title
+```r
+# comments
+# 中文
+```

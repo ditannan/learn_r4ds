@@ -1,0 +1,187 @@
+---
+title: "model_basics"
+author: "xzm"
+date: "2018年3月10日"
+output: html_document
+---
+
+```{r setup, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+```
+# 序
+寒假那会先来没事用手机陆陆续续把Hadley大神的《[R for data science](http://r4ds.had.co.nz)》简单瞄了一遍，但有些章节只是一眼带过，有些精华不曾吸收，趁着现在一周只要开一次组会，就重新敲一敲Model章节第一部分的代码。
+
+# 开工
+大神这章以简单的线性模型为例，引入模型概念，要说简单线性模型，其实并不简单，前几天看ISLR的线性模型那章才发现有很多知识漏洞。[ISLR之线性模型](https://ditannan.me/2018/02/28/islr%E4%B9%8B%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/)
+
+```{r loadong packages, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(modelr)
+library(tibble)
+```
+
+先看下`modelr`包中`sim1`数据集：
+```{r plot sim1}
+sim1 %>% ggplot(aes(x, y)) + 
+  geom_point()
+```
+
+因此，我们试图拟合函数$y=a_0+a_1\times x$。
+
+生成模拟的斜率和截距，并将其汇入散点图中：
+
+```{r generate models data}
+models <- tibble(
+  a0 = runif(250, -20, 40),
+  a1 = runif(250, -5, 5)
+)
+sim1 %>% ggplot(aes(x, y)) +
+  geom_abline(aes(intercept = a0, slope = a1), data = models, alpha = .25) +
+  geom_point()
+```
+
+图中有250个模型，接下来计算哪个模型最好。根据最小二乘法，即计算$\sum(y - \bar y)^2$最小。先定义求$\bar y$函数，给定截距和斜率，计算预测函数值：
+```{r compute y bar}
+model1 <- function(a, data) {
+  a[1] + data$x * a[2]
+}
+model1(c(7, 1.5), sim1)
+```
+当截距等于7，斜率等于1.5时得到上述预测值。
+再定义求平方和函数。此处转化为求$\sqrt{\frac{(y - \bar y)^2}{n}}$
+```{r compute sum of squared residual}
+measure_distance <- function(mod, data) {
+  diff <- data$y - model1(mod, data)
+  return(sqrt(mean(diff ^ 2)))
+}
+measure_distance(c(7, 1.5), sim1)
+```
+定义求不同a0，a1对应的距离。
+```{r compute distance of different a0 a1}
+sim1_dist <- function(a0, a1) {
+  measure_distance(c(a0, a1), sim1)
+}
+models <- models %>% 
+  mutate(dist = purrr::map2_dbl(a0, a1, sim1_dist))
+models
+```
+我们再挑选出10条最好的模型，即距离最小，并上色。
+```{r}
+sim1 %>% ggplot(aes(x, y)) +
+  geom_point() +
+  geom_abline(
+    aes(intercept = a0, slope = a1, colour = dist),
+    data = filter(models, rank(dist) <= 10)
+  )
+```
+将这十对a0，a1在散点图中标识出来：
+```{r}
+models %>% ggplot(aes(a0, a1)) +
+  geom_point(data = filter(models, rank(dist) <= 10), size = 4, colour = 'red') +
+  geom_point(aes(colour = dist))
+```
+计算最优参数：
+```{r}
+best <- optim(c(0, 0), measure_distance, data = sim1)
+best$par
+```
+将所求直线绘图
+```{r}
+sim1 %>% ggplot(aes(x, y)) +
+  geom_point() +
+  geom_abline(intercept = best$par[1], slope = best$par[2])
+```
+
+使用函数`lm()`计算：
+```{r}
+sim1_mod <- lm(y ~ x, data = sim1)
+coef(sim1_mod)
+```
+
+# Exercise
+## 1.
+> One downside of the linear model is that it is sensitive to unusual values because the distance incorporates a squared term. Fit a linear model to the simulated data below, and visualise the results. Rerun a few times to generate different simulated datasets. What do you notice about the model?
+```r
+sim1a <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+```
+
+### 生成数据集
+```{r}
+sim1a <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+sim1a
+```
+看方程知道y是在x线性组合基础上加了个t分布，来个散点图看看样子：
+```{r}
+sim1a_p <- sim1a %>% 
+  ggplot(aes(x, y)) +
+  geom_point()
+sim1a_p
+```
+拟合回归线
+```{r}
+sim1a_fit <- lm(y ~ x, data = sim1a)
+coef(sim1a_fit)
+```
+将直线添加到图形中
+```{r}
+sim1a_p + geom_abline(intercept = coef(sim1a_fit)[1], slope = coef(sim1a_fit)[2])
+```
+
+大神让我们多重复几次，会有新发现，发现就是总是有个点是异常值，模型变化也很大，说明模型很容易受异常值的影响。
+
+这样吧，我们试着拟合个50次，看看每次的截距和斜率是怎样的变化。
+```{r}
+par <- matrix(0, nrow = 50, ncol = 2)
+for(i in 1 : 50) {
+  sim1a <- tibble(
+    x = rep(1:10, each = 3),
+    y = x * 1.5 + 6 + rt(length(x), df = 2)
+  )
+  sim1a_fit <- lm(y ~ x, data = sim1a)
+  par[i, 1] <- coef(sim1a_fit)[1]
+  par[i, 2] <- coef(sim1a_fit)[2]
+}
+par
+```
+
+看看截距的变异sd=sd(par[, 1])=
+`r sd(par[, 1])`,看看斜率的变异sd=sd(par[, 2])=
+`r sd(par[, 2])`。还是有些不同的。
+```{r}
+summary(par[, 1])
+summary(par[, 2])
+```
+
+
+
+## 2.
+> One way to make linear models more robust is to use a different distance measure. For example, instead of root-mean-squared distance, you could use mean-absolute distance:
+```r
+measure_distance <- function(mod, data) {
+  diff <- data$y - make_prediction(mod, data)
+  mean(abs(diff))
+}
+```
+> Use optim() to fit this model to the simulated data above and compare it to the linear model.
+
+那我们就使用optim()函数求解使用均数绝对值的距离拟合数据的最佳模型：
+```{r}
+make_prediction <- function(mod, data) {
+  mod[1] + mod[2] * data$x
+}
+measure_distance <- function(mod, data) {
+  diff <- data$y - make_prediction(mod, data)
+  mean(abs(diff))
+}
+best <- optim(c(0, 0), measure_distance, data = sim1)
+best$par
+```
+
+上面我们用`lm()`得到的模型系数是 `r coef(sim1_mod)`。

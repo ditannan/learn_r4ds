@@ -1,0 +1,76 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# 概率论与R
+## 条件概率
+### 例1
+> 投掷两枚骰子，如果和为7，计算其中第一个骰子为2的概率？
+
+在R中模拟10000次，如下：
+```{r}
+# 设定模拟次数
+n <- 10000
+# 起始次数
+ctr <- 0
+# 结果容器
+simlist <- numeric(n)
+# 开始模拟
+while (ctr < n) {
+  trial <- sample(1 : 6, 2, replace = TRUE)   ## 从1到6中有放回抽取两个数
+  if (sum(trial) == 7) {   ## 检查是否和为7，不为7就跳过重新模拟
+    ifelse(trial[1] == 2, simlist[ctr] <- 1, simlist[ctr] <- 0)  ## 检查第一个骰子是否为2
+    ctr <- ctr + 1  ## 一次成功模拟，进行下一次
+  }
+}
+mean(simlist)
+```
+
+### 例2
+> 雪投掷三枚硬币，全为正面概率为1/8,如果我已知第一枚硬币是正面，那么雪投的三枚硬币都是正面的概率是多少？
+
+同样我们模拟10000次
+```{r}
+n <- 10000
+ctr <- 0
+simlist <- numeric(n)
+while (ctr < n) {
+  trial <- sample(0 : 1, 3, replace = TRUE)
+  if (trial[1] == 1) {
+    ifelse(trial[2] + trial[3] == 2, simlist[ctr] <- 1, simlist[ctr] <- 0)
+    ctr <- ctr + 1
+  }
+}
+mean(simlist)
+```
+
+### 例3
+> 有n个不同数字写在n张卡片上，每次看一张卡片，猜所看到的的数是不是这n个数字中最大的，怎样才能最大概率猜到这个数，最大概率是多少？
+
+策略：对于前$r=\frac{n}{e}$}个数，放弃，然后选择后面第一个出现大于前r个数的数。
+看看使用这种策略成功的概率多大，模拟进行100000次试验：
+```{r}
+ntrials <- 100000
+n <- 100
+x <- n
+r <- round(n / exp(1))
+simlist <- vector(length = ntrials)
+for (j in 1 : ntrials) {
+  numbers <- sample(1 : n, n)  ## 打乱数顺序
+  best <- which(numbers == x)  ## 确定最大数所在位置
+  prob <- 0
+  rmax <- max(numbers[1 : r]) ## 拒绝的前r个数字中最大的数
+  for (i in (r + 1) : n) {    ## 遍历剩下的n-r个数
+    if (numbers[i] > rmax) {  ## 先看是否大于前r个数中最大的
+      if (numbers[i] == x) prob <- 1  ## 看是否是我们要的最大的数
+      break
+    } else {
+      prob <- 0   
+    }
+  }
+  simlist[j] <- prob
+}
+mean(simlist)
+```
+

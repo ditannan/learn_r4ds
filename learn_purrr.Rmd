@@ -1,0 +1,5 @@
+---
+title: "Apply functions with 'purrr'"
+output: html_notebook
+---
+
