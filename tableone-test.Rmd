@@ -1,0 +1,121 @@
+---
+title: "Table One"
+output: html_notebook
+---
+
+```{r loading-packages, message=FALSE, warning=FALSE}
+library(tableone)
+```
+
+## 生成数据
+```{r create-data}
+set.seed(2017)
+age <- sample(30 : 39, 200, replace = TRUE)
+gender <- sample(c('Male', 'Female'), 200, replace = TRUE)
+cholesterol <- rnorm(200, 140, 30)
+BMI <- rnorm(200, 27, 8)
+smoking <- sample(c('Yes', 'No'), 200, replace = TRUE)
+SBP <- rnorm(200, 130, 20)
+education <- sample(c('High', 'Middle', 'Low'), 200, replace = TRUE)
+income <- sample(c('High', 'Middle', 'Low'), 200, replace = TRUE)
+
+df <- data.frame(
+  age = age, gender = gender, cho = round(cholesterol, 2),
+  bmi = round(BMI, 2), sbp = round(SBP, 2), edu = education,
+  income = income, smoking = smoking
+)
+
+df
+```
+
+## 指定对应的分类变量
+```{r}
+vars <- names(df)
+vars
+
+catvars = c('gender', 'smoking', 'edu', 'income')
+```
+
+## 总的情况表
+```{r}
+table1 <- CreateTableOne(vars = vars, data = df, factorVars = catvars)
+table1
+```
+
+
+```{r}
+vars2 <- c('age', 'cho', 'sbp', 'bmi', 'smoking', 'edu', 'income')
+
+table2 <- CreateTableOne(vars = vars2, strata = 'gender', data = df, factorVars = catvars)
+table2
+```
+
+
+
+```{r}
+function (
+  vars, strata, data, includeNA = FALSE, test = TRUE, 
+  testApprox = chisq.test, argsApprox = list(correct = TRUE), 
+  testExact = fisher.test, argsExact = list(workspace = 2 * 10^5), smd = TRUE
+) {
+    ModuleStopIfNotDataFrame(data)
+    vars <- ModuleReturnVarsExist(vars, data)
+    ModuleStopIfNoVarsLeft(vars)
+    percentMissing <- ModulePercentMissing(data[vars])
+    dat <- data[c(vars)]
+    test <- ModuleReturnFalseIfNoStrata(strata, test)
+    smd <- ModuleReturnFalseIfNoStrata(strata, smd)
+    strata <- ModuleReturnStrata(strata, data)
+    
+    logiNotFactor <- sapply(
+      dat, function(VEC) {
+        !any(class(VEC) %in% c("factor"))
+    }
+    )
+    
+    dat[logiNotFactor] <- lapply(dat[logiNotFactor], factor)
+    if (includeNA) {
+        dat <- ModuleIncludeNaAsLevel(dat)
+    }
+    
+    result <- by(
+      data = dat, INDICES = strata, FUN = function(dfStrataDat) {
+        sapply(dfStrataDat, FUN = ModuleCreateTableForOneVar, 
+            simplify = FALSE)
+    }, simplify = FALSE
+    )
+    
+    if (length(result) > 1) {
+        strataVarName <- ModuleCreateStrataVarName(result)
+        attributes(result) <- c(attributes(result), list(strataVarName = strataVarName))
+    }
+    
+    pValues <- NULL
+    listXtabs <- list()
+    strataVar <- ModuleCreateStrataVarAsFactor(result, strata)
+    if (test) {
+        lstXtabsPVals <- ModuleApproxExactTests(result = result, 
+            strata = strata, dat = dat, strataVarName = strataVarName, 
+            testApprox = testApprox, argsApprox = argsApprox, 
+            testExact = testExact, argsExact = argsExact)
+        pValues <- lstXtabsPVals$pValues
+        listXtabs <- lstXtabsPVals$xtabs
+    }
+    
+    smds <- NULL
+    if (smd) {
+        smds <- sapply(dat, function(var) {
+            StdDiffMulti(variable = var, group = strataVar)
+        }, simplify = FALSE)
+        smds <- FormatLstSmds(smds, nStrata = length(result))
+    }
+    
+    class(result) <- c("CatTable", class(result))
+    
+    attributes(result) <- c(attributes(result), list(pValues = pValues), 
+        list(xtabs = listXtabs), list(smd = smds), list(percentMissing = percentMissing))
+   
+    return(result)
+}
+```
+
