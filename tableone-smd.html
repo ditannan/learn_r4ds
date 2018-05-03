@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Kazuki Yoshida" />
+
+<meta name="date" content="2015-08-07" />
+
+<title>Using standardized mean differences</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Using standardized mean differences</h1>
+<h4 class="author"><em>Kazuki Yoshida</em></h4>
+<h4 class="date"><em>2015-08-07</em></h4>
+
+
+
+<pre><code>## Warning: package 'knitr' was built under R version 3.4.3</code></pre>
+<div id="standardized-mean-difference" class="section level2">
+<h2>Standardized mean difference</h2>
+<p>The standardized (mean) difference is a measure of distance between two group means in terms of one or more variables. In practice it is often used as a balance measure of individual covariates before and after propensity score matching. As it is standardized, comparison across variables on different scales is possible. For definitions see <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144483/#s11title" class="uri">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144483/#s11title</a> .</p>
+<p>Standardized mean differences can be easily calculated with tableone. All standardized mean differences in this package are absolute values, thus, there is no directionality.</p>
+</div>
+<div id="load-packages" class="section level2">
+<h2>Load packages</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## tableone package itself
+<span class="kw">library</span>(tableone)
+## PS matching
+<span class="kw">library</span>(Matching)
+## Weighted analysis
+<span class="kw">library</span>(survey)
+## Reorganizing data
+<span class="kw">library</span>(reshape2)
+## plotting
+<span class="kw">library</span>(ggplot2)</code></pre></div>
+</div>
+<div id="load-data" class="section level2">
+<h2>Load data</h2>
+<p>The right heart catheterization dataset is available at <a href="http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets" class="uri">http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets</a> . This dataset was originally used in Connors <em>et al</em>. JAMA 1996;276:889-897, and has been made publicly available.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Right heart cath dataset
+rhc &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/rhc.csv&quot;</span>)</code></pre></div>
+</div>
+<div id="unmatched-table" class="section level2">
+<h2>Unmatched table</h2>
+<p>Out of the 50 covariates, 32 have standardized mean differences of greater than 0.1, which is often considered the sign of important covariate imbalance (<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144483/#s11title" class="uri">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144483/#s11title</a> ).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Covariates
+vars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;age&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;race&quot;</span>,<span class="st">&quot;edu&quot;</span>,<span class="st">&quot;income&quot;</span>,<span class="st">&quot;ninsclas&quot;</span>,<span class="st">&quot;cat1&quot;</span>,<span class="st">&quot;das2d3pc&quot;</span>,<span class="st">&quot;dnr1&quot;</span>,
+          <span class="st">&quot;ca&quot;</span>,<span class="st">&quot;surv2md1&quot;</span>,<span class="st">&quot;aps1&quot;</span>,<span class="st">&quot;scoma1&quot;</span>,<span class="st">&quot;wtkilo1&quot;</span>,<span class="st">&quot;temp1&quot;</span>,<span class="st">&quot;meanbp1&quot;</span>,<span class="st">&quot;resp1&quot;</span>,
+          <span class="st">&quot;hrt1&quot;</span>,<span class="st">&quot;pafi1&quot;</span>,<span class="st">&quot;paco21&quot;</span>,<span class="st">&quot;ph1&quot;</span>,<span class="st">&quot;wblc1&quot;</span>,<span class="st">&quot;hema1&quot;</span>,<span class="st">&quot;sod1&quot;</span>,<span class="st">&quot;pot1&quot;</span>,<span class="st">&quot;crea1&quot;</span>,
+          <span class="st">&quot;bili1&quot;</span>,<span class="st">&quot;alb1&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;card&quot;</span>,<span class="st">&quot;neuro&quot;</span>,<span class="st">&quot;gastr&quot;</span>,<span class="st">&quot;renal&quot;</span>,<span class="st">&quot;meta&quot;</span>,<span class="st">&quot;hema&quot;</span>,
+          <span class="st">&quot;seps&quot;</span>,<span class="st">&quot;trauma&quot;</span>,<span class="st">&quot;ortho&quot;</span>,<span class="st">&quot;cardiohx&quot;</span>,<span class="st">&quot;chfhx&quot;</span>,<span class="st">&quot;dementhx&quot;</span>,<span class="st">&quot;psychhx&quot;</span>,
+          <span class="st">&quot;chrpulhx&quot;</span>,<span class="st">&quot;renalhx&quot;</span>,<span class="st">&quot;liverhx&quot;</span>,<span class="st">&quot;gibledhx&quot;</span>,<span class="st">&quot;malighx&quot;</span>,<span class="st">&quot;immunhx&quot;</span>,
+          <span class="st">&quot;transhx&quot;</span>,<span class="st">&quot;amihx&quot;</span>)
+
+## Construct a table
+tabUnmatched &lt;-<span class="st"> </span><span class="kw">CreateTableOne</span>(<span class="dt">vars =</span> vars, <span class="dt">strata =</span> <span class="st">&quot;swang1&quot;</span>, <span class="dt">data =</span> rhc, <span class="dt">test =</span> <span class="ot">FALSE</span>)
+## Show table with SMD
+<span class="kw">print</span>(tabUnmatched, <span class="dt">smd =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>                        Stratified by swang1
+                         No RHC          RHC             SMD   
+  n                        3551            2184                
+  age (mean (sd))         61.76 (17.29)   60.75 (15.63)   0.061
+  sex = Male (%)           1914 (53.9)     1278 (58.5)    0.093
+  race (%)                                                0.036
+     black                  585 (16.5)      335 (15.3)         
+     other                  213 ( 6.0)      142 ( 6.5)         
+     white                 2753 (77.5)     1707 (78.2)         
+  edu (mean (sd))         11.57 (3.13)    11.86 (3.16)    0.091
+  income (%)                                              0.142
+     $11-$25k               713 (20.1)      452 (20.7)         
+     $25-$50k               500 (14.1)      393 (18.0)         
+     &gt; $50k                 257 ( 7.2)      194 ( 8.9)         
+     Under $11k            2081 (58.6)     1145 (52.4)         
+  ninsclas (%)                                            0.194
+     Medicaid               454 (12.8)      193 ( 8.8)         
+     Medicare               947 (26.7)      511 (23.4)         
+     Medicare &amp; Medicaid    251 ( 7.1)      123 ( 5.6)         
+     No insurance           186 ( 5.2)      136 ( 6.2)         
+     Private                967 (27.2)      731 (33.5)         
+     Private &amp; Medicare     746 (21.0)      490 (22.4)         
+  cat1 (%)                                                0.583
+     ARF                   1581 (44.5)      909 (41.6)         
+     CHF                    247 ( 7.0)      209 ( 9.6)         
+     Cirrhosis              175 ( 4.9)       49 ( 2.2)         
+     Colon Cancer             6 ( 0.2)        1 ( 0.0)         
+     Coma                   341 ( 9.6)       95 ( 4.3)         
+     COPD                   399 (11.2)       58 ( 2.7)         
+     Lung Cancer             34 ( 1.0)        5 ( 0.2)         
+     MOSF w/Malignancy      241 ( 6.8)      158 ( 7.2)         
+     MOSF w/Sepsis          527 (14.8)      700 (32.1)         
+  das2d3pc (mean (sd))    20.37 (5.48)    20.70 (5.03)    0.063
+  dnr1 = Yes (%)            499 (14.1)      155 ( 7.1)    0.228
+  ca (%)                                                  0.107
+     Metastatic             261 ( 7.4)      123 ( 5.6)         
+     No                    2652 (74.7)     1727 (79.1)         
+     Yes                    638 (18.0)      334 (15.3)         
+  surv2md1 (mean (sd))     0.61 (0.19)     0.57 (0.20)    0.198
+  aps1 (mean (sd))        50.93 (18.81)   60.74 (20.27)   0.501
+  scoma1 (mean (sd))      22.25 (31.37)   18.97 (28.26)   0.110
+  wtkilo1 (mean (sd))     65.04 (29.50)   72.36 (27.73)   0.256
+  temp1 (mean (sd))       37.63 (1.74)    37.59 (1.83)    0.021
+  meanbp1 (mean (sd))     84.87 (38.87)   68.20 (34.24)   0.455
+  resp1 (mean (sd))       28.98 (13.95)   26.65 (14.17)   0.165
+  hrt1 (mean (sd))       112.87 (40.94)  118.93 (41.47)   0.147
+  pafi1 (mean (sd))      240.63 (116.66) 192.43 (105.54)  0.433
+  paco21 (mean (sd))      39.95 (14.24)   36.79 (10.97)   0.249
+  ph1 (mean (sd))          7.39 (0.11)     7.38 (0.11)    0.120
+  wblc1 (mean (sd))       15.26 (11.41)   16.27 (12.55)   0.084
+  hema1 (mean (sd))       32.70 (8.79)    30.51 (7.42)    0.269
+  sod1 (mean (sd))       137.04 (7.68)   136.33 (7.60)    0.092
+  pot1 (mean (sd))         4.08 (1.04)     4.05 (1.01)    0.027
+  crea1 (mean (sd))        1.92 (2.03)     2.47 (2.05)    0.270
+  bili1 (mean (sd))        2.00 (4.43)     2.71 (5.33)    0.145
+  alb1 (mean (sd))         3.16 (0.67)     2.98 (0.93)    0.230
+  resp = Yes (%)           1481 (41.7)      632 (28.9)    0.270
+  card = Yes (%)           1007 (28.4)      924 (42.3)    0.295
+  neuro = Yes (%)           575 (16.2)      118 ( 5.4)    0.353
+  gastr = Yes (%)           522 (14.7)      420 (19.2)    0.121
+  renal = Yes (%)           147 ( 4.1)      148 ( 6.8)    0.116
+  meta = Yes (%)            172 ( 4.8)       93 ( 4.3)    0.028
+  hema = Yes (%)            239 ( 6.7)      115 ( 5.3)    0.062
+  seps = Yes (%)            515 (14.5)      516 (23.6)    0.234
+  trauma = Yes (%)           18 ( 0.5)       34 ( 1.6)    0.104
+  ortho = Yes (%)             3 ( 0.1)        4 ( 0.2)    0.027
+  cardiohx (mean (sd))     0.16 (0.37)     0.20 (0.40)    0.116
+  chfhx (mean (sd))        0.17 (0.37)     0.19 (0.40)    0.069
+  dementhx (mean (sd))     0.12 (0.32)     0.07 (0.25)    0.163
+  psychhx (mean (sd))      0.08 (0.27)     0.05 (0.21)    0.143
+  chrpulhx (mean (sd))     0.22 (0.41)     0.14 (0.35)    0.192
+  renalhx (mean (sd))      0.04 (0.20)     0.05 (0.21)    0.032
+  liverhx (mean (sd))      0.07 (0.26)     0.06 (0.24)    0.049
+  gibledhx (mean (sd))     0.04 (0.19)     0.02 (0.16)    0.070
+  malighx (mean (sd))      0.25 (0.43)     0.20 (0.40)    0.101
+  immunhx (mean (sd))      0.26 (0.44)     0.29 (0.45)    0.080
+  transhx (mean (sd))      0.09 (0.29)     0.15 (0.36)    0.170
+  amihx (mean (sd))        0.03 (0.17)     0.04 (0.20)    0.074</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Count covariates with important imbalance
+<span class="kw">addmargins</span>(<span class="kw">table</span>(<span class="kw">ExtractSmd</span>(tabUnmatched) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.1</span>))</code></pre></div>
+<pre><code>
+FALSE  TRUE   Sum 
+   18    32    50 </code></pre>
+</div>
+<div id="propensity-score-estimation" class="section level2">
+<h2>Propensity score estimation</h2>
+<p>Usually a logistic regression model is used to estimate individual propensity scores. The model here is taken from “How To Use Propensity Score Analysis” (<a href="http://www.mc.vanderbilt.edu/crc/workshop_files/2008-04-11.pdf" class="uri">http://www.mc.vanderbilt.edu/crc/workshop_files/2008-04-11.pdf</a> ). Predicted probabilities of being assigned to right heart catherterization, being assigned no right heart catherterization, being assigned to the true assignment, as well as the smaller of the probabilities of being assigned to right heart catherterization or no right heart catherterization are calculated for later use in propensity score matching and weighting.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Fit model
+psModel &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> swang1 <span class="op">~</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>race <span class="op">+</span><span class="st"> </span>edu <span class="op">+</span><span class="st"> </span>income <span class="op">+</span><span class="st"> </span>ninsclas <span class="op">+</span>
+<span class="st">                         </span>cat1 <span class="op">+</span><span class="st"> </span>das2d3pc <span class="op">+</span><span class="st"> </span>dnr1 <span class="op">+</span><span class="st"> </span>ca <span class="op">+</span><span class="st"> </span>surv2md1 <span class="op">+</span><span class="st"> </span>aps1 <span class="op">+</span><span class="st"> </span>scoma1 <span class="op">+</span>
+<span class="st">                         </span>wtkilo1 <span class="op">+</span><span class="st"> </span>temp1 <span class="op">+</span><span class="st"> </span>meanbp1 <span class="op">+</span><span class="st"> </span>resp1 <span class="op">+</span><span class="st"> </span>hrt1 <span class="op">+</span><span class="st"> </span>pafi1 <span class="op">+</span>
+<span class="st">                         </span>paco21 <span class="op">+</span><span class="st"> </span>ph1 <span class="op">+</span><span class="st"> </span>wblc1 <span class="op">+</span><span class="st"> </span>hema1 <span class="op">+</span><span class="st"> </span>sod1 <span class="op">+</span><span class="st"> </span>pot1 <span class="op">+</span><span class="st"> </span>crea1 <span class="op">+</span>
+<span class="st">                         </span>bili1 <span class="op">+</span><span class="st"> </span>alb1 <span class="op">+</span><span class="st"> </span>resp <span class="op">+</span><span class="st"> </span>card <span class="op">+</span><span class="st"> </span>neuro <span class="op">+</span><span class="st"> </span>gastr <span class="op">+</span><span class="st"> </span>renal <span class="op">+</span>
+<span class="st">                         </span>meta <span class="op">+</span><span class="st"> </span>hema <span class="op">+</span><span class="st"> </span>seps <span class="op">+</span><span class="st"> </span>trauma <span class="op">+</span><span class="st"> </span>ortho <span class="op">+</span><span class="st"> </span>cardiohx <span class="op">+</span><span class="st"> </span>chfhx <span class="op">+</span>
+<span class="st">                         </span>dementhx <span class="op">+</span><span class="st"> </span>psychhx <span class="op">+</span><span class="st"> </span>chrpulhx <span class="op">+</span><span class="st"> </span>renalhx <span class="op">+</span><span class="st"> </span>liverhx <span class="op">+</span><span class="st"> </span>gibledhx <span class="op">+</span>
+<span class="st">                         </span>malighx <span class="op">+</span><span class="st"> </span>immunhx <span class="op">+</span><span class="st"> </span>transhx <span class="op">+</span><span class="st"> </span>amihx,
+               <span class="dt">family  =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>),
+               <span class="dt">data    =</span> rhc)
+
+## Predicted probability of being assigned to RHC
+rhc<span class="op">$</span>pRhc &lt;-<span class="st"> </span><span class="kw">predict</span>(psModel, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)
+## Predicted probability of being assigned to no RHC
+rhc<span class="op">$</span>pNoRhc &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>rhc<span class="op">$</span>pRhc
+
+## Predicted probability of being assigned to the
+## treatment actually assigned (either RHC or no RHC)
+rhc<span class="op">$</span>pAssign &lt;-<span class="st"> </span><span class="ot">NA</span>
+rhc<span class="op">$</span>pAssign[rhc<span class="op">$</span>swang1 <span class="op">==</span><span class="st"> &quot;RHC&quot;</span>]    &lt;-<span class="st"> </span>rhc<span class="op">$</span>pRhc[rhc<span class="op">$</span>swang1   <span class="op">==</span><span class="st"> &quot;RHC&quot;</span>]
+rhc<span class="op">$</span>pAssign[rhc<span class="op">$</span>swang1 <span class="op">==</span><span class="st"> &quot;No RHC&quot;</span>] &lt;-<span class="st"> </span>rhc<span class="op">$</span>pNoRhc[rhc<span class="op">$</span>swang1 <span class="op">==</span><span class="st"> &quot;No RHC&quot;</span>]
+## Smaller of pRhc vs pNoRhc for matching weight
+rhc<span class="op">$</span>pMin &lt;-<span class="st"> </span><span class="kw">pmin</span>(rhc<span class="op">$</span>pRhc, rhc<span class="op">$</span>pNoRhc)</code></pre></div>
+</div>
+<div id="propensity-score-matching" class="section level2">
+<h2>Propensity score matching</h2>
+<p>The Matching package can be used for propensity score matching. The logit of propensity score is often used as the matching scale, and the matchign caliper is often 0.2 <span class="math inline">\(\times\)</span> SD(logit(PS)). See <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144483/#s5title" class="uri">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144483/#s5title</a> for suggestions. After matching, all the standardized mean differences are below 0.1.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">listMatch &lt;-<span class="st"> </span><span class="kw">Match</span>(<span class="dt">Tr       =</span> (rhc<span class="op">$</span>swang1 <span class="op">==</span><span class="st"> &quot;RHC&quot;</span>),      <span class="co"># Need to be in 0,1</span>
+                   ## logit of PS,i.e., log(PS/(1-PS)) as matching scale
+                   <span class="dt">X        =</span> <span class="kw">log</span>(rhc<span class="op">$</span>pRhc <span class="op">/</span><span class="st"> </span>rhc<span class="op">$</span>pNoRhc),
+                   ## 1:1 matching
+                   <span class="dt">M        =</span> <span class="dv">1</span>,
+                   ## caliper = 0.2 * SD(logit(PS))
+                   <span class="dt">caliper  =</span> <span class="fl">0.2</span>,
+                   <span class="dt">replace  =</span> <span class="ot">FALSE</span>,
+                   <span class="dt">ties     =</span> <span class="ot">TRUE</span>,
+                   <span class="dt">version  =</span> <span class="st">&quot;fast&quot;</span>)
+## Extract matched data
+rhcMatched &lt;-<span class="st"> </span>rhc[<span class="kw">unlist</span>(listMatch[<span class="kw">c</span>(<span class="st">&quot;index.treated&quot;</span>,<span class="st">&quot;index.control&quot;</span>)]), ]
+
+## Construct a table
+tabMatched &lt;-<span class="st"> </span><span class="kw">CreateTableOne</span>(<span class="dt">vars =</span> vars, <span class="dt">strata =</span> <span class="st">&quot;swang1&quot;</span>, <span class="dt">data =</span> rhcMatched, <span class="dt">test =</span> <span class="ot">FALSE</span>)
+## Show table with SMD
+<span class="kw">print</span>(tabMatched, <span class="dt">smd =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>                        Stratified by swang1
+                         No RHC          RHC             SMD   
+  n                        1563            1563                
+  age (mean (sd))         60.67 (17.38)   60.56 (15.72)   0.007
+  sex = Male (%)            882 (56.4)      892 (57.1)    0.013
+  race (%)                                                0.017
+     black                  241 (15.4)      248 (15.9)         
+     other                  104 ( 6.7)       99 ( 6.3)         
+     white                 1218 (77.9)     1216 (77.8)         
+  edu (mean (sd))         11.83 (3.16)    11.78 (3.16)    0.016
+  income (%)                                              0.045
+     $11-$25k               317 (20.3)      336 (21.5)         
+     $25-$50k               251 (16.1)      262 (16.8)         
+     &gt; $50k                 137 ( 8.8)      124 ( 7.9)         
+     Under $11k             858 (54.9)      841 (53.8)         
+  ninsclas (%)                                            0.029
+     Medicaid               154 ( 9.9)      152 ( 9.7)         
+     Medicare               370 (23.7)      371 (23.7)         
+     Medicare &amp; Medicaid     91 ( 5.8)       94 ( 6.0)         
+     No insurance            83 ( 5.3)       90 ( 5.8)         
+     Private                514 (32.9)      498 (31.9)         
+     Private &amp; Medicare     351 (22.5)      358 (22.9)         
+  cat1 (%)                                                0.060
+     ARF                    713 (45.6)      680 (43.5)         
+     CHF                    171 (10.9)      175 (11.2)         
+     Cirrhosis               46 ( 2.9)       47 ( 3.0)         
+     Colon Cancer             1 ( 0.1)        1 ( 0.1)         
+     Coma                    82 ( 5.2)       76 ( 4.9)         
+     COPD                    49 ( 3.1)       57 ( 3.6)         
+     Lung Cancer              3 ( 0.2)        5 ( 0.3)         
+     MOSF w/Malignancy      125 ( 8.0)      128 ( 8.2)         
+     MOSF w/Sepsis          373 (23.9)      394 (25.2)         
+  das2d3pc (mean (sd))    20.54 (5.44)    20.58 (5.08)    0.009
+  dnr1 = Yes (%)            133 ( 8.5)      130 ( 8.3)    0.007
+  ca (%)                                                  0.020
+     Metastatic              99 ( 6.3)       98 ( 6.3)         
+     No                    1205 (77.1)     1194 (76.4)         
+     Yes                    259 (16.6)      271 (17.3)         
+  surv2md1 (mean (sd))     0.58 (0.21)     0.59 (0.20)    0.022
+  aps1 (mean (sd))        57.25 (19.73)   57.27 (19.66)   0.001
+  scoma1 (mean (sd))      19.38 (28.93)   18.85 (28.25)   0.019
+  wtkilo1 (mean (sd))     69.69 (26.77)   70.73 (27.19)   0.039
+  temp1 (mean (sd))       37.64 (1.88)    37.62 (1.74)    0.009
+  meanbp1 (mean (sd))     73.16 (35.38)   73.09 (35.73)   0.002
+  resp1 (mean (sd))       28.12 (13.87)   28.07 (14.17)   0.003
+  hrt1 (mean (sd))       116.86 (42.19)  117.76 (40.24)   0.022
+  pafi1 (mean (sd))      210.14 (106.99) 211.43 (107.97)  0.012
+  paco21 (mean (sd))      37.60 (10.83)   37.43 (11.51)   0.016
+  ph1 (mean (sd))          7.39 (0.11)     7.39 (0.11)    0.005
+  wblc1 (mean (sd))       15.49 (11.45)   15.93 (13.00)   0.036
+  hema1 (mean (sd))       30.67 (8.10)    30.90 (7.54)    0.029
+  sod1 (mean (sd))       136.59 (7.91)   136.64 (7.43)    0.007
+  pot1 (mean (sd))         4.04 (1.04)     4.05 (0.99)    0.006
+  crea1 (mean (sd))        2.30 (2.42)     2.28 (1.97)    0.009
+  bili1 (mean (sd))        2.59 (5.62)     2.55 (5.09)    0.006
+  alb1 (mean (sd))         3.03 (0.70)     3.04 (0.96)    0.011
+  resp = Yes (%)            531 (34.0)      519 (33.2)    0.016
+  card = Yes (%)            597 (38.2)      598 (38.3)    0.001
+  neuro = Yes (%)           119 ( 7.6)      109 ( 7.0)    0.025
+  gastr = Yes (%)           283 (18.1)      291 (18.6)    0.013
+  renal = Yes (%)            92 ( 5.9)       94 ( 6.0)    0.005
+  meta = Yes (%)             69 ( 4.4)       74 ( 4.7)    0.015
+  hema = Yes (%)            103 ( 6.6)       97 ( 6.2)    0.016
+  seps = Yes (%)            337 (21.6)      332 (21.2)    0.008
+  trauma = Yes (%)           13 ( 0.8)       13 ( 0.8)   &lt;0.001
+  ortho = Yes (%)             1 ( 0.1)        1 ( 0.1)   &lt;0.001
+  cardiohx (mean (sd))     0.20 (0.40)     0.20 (0.40)    0.011
+  chfhx (mean (sd))        0.20 (0.40)     0.20 (0.40)    0.002
+  dementhx (mean (sd))     0.08 (0.28)     0.07 (0.26)    0.036
+  psychhx (mean (sd))      0.05 (0.22)     0.05 (0.23)    0.009
+  chrpulhx (mean (sd))     0.15 (0.36)     0.15 (0.36)    0.012
+  renalhx (mean (sd))      0.05 (0.23)     0.05 (0.22)    0.020
+  liverhx (mean (sd))      0.07 (0.25)     0.07 (0.26)    0.008
+  gibledhx (mean (sd))     0.03 (0.17)     0.03 (0.17)    0.011
+  malighx (mean (sd))      0.23 (0.42)     0.23 (0.42)    0.008
+  immunhx (mean (sd))      0.29 (0.45)     0.28 (0.45)    0.021
+  transhx (mean (sd))      0.13 (0.33)     0.12 (0.33)    0.012
+  amihx (mean (sd))        0.03 (0.17)     0.03 (0.17)   &lt;0.001</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Count covariates with important imbalance
+<span class="kw">addmargins</span>(<span class="kw">table</span>(<span class="kw">ExtractSmd</span>(tabMatched) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.1</span>))</code></pre></div>
+<pre><code>
+FALSE   Sum 
+   50    50 </code></pre>
+</div>
+<div id="propensity-score-matching-weight" class="section level2">
+<h2>Propensity score matching weight</h2>
+<p>The matching weight method is a weighting analogue to the 1:1 pairwise algorithmic matching (<a href="http://www.ncbi.nlm.nih.gov/pubmed/23902694" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/23902694</a> ). The matching weight is defined as the smaller of the predicted probabilities of receiving or not receiving the treatment over the predicted probability of being assigned to the arm the patient is actually in. After weighting, all the standardized mean differences are below 0.1. The standardized mean differences in weighted data are explained in <a href="http://onlinelibrary.wiley.com/doi/10.1002/sim.6607/full" class="uri">http://onlinelibrary.wiley.com/doi/10.1002/sim.6607/full</a> .</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Matching weight
+rhc<span class="op">$</span>mw &lt;-<span class="st"> </span>rhc<span class="op">$</span>pMin <span class="op">/</span><span class="st"> </span>rhc<span class="op">$</span>pAssign
+## Weighted data
+rhcSvy &lt;-<span class="st"> </span><span class="kw">svydesign</span>(<span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> rhc, <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>mw)
+
+## Construct a table (This is a bit slow.)
+tabWeighted &lt;-<span class="st"> </span><span class="kw">svyCreateTableOne</span>(<span class="dt">vars =</span> vars, <span class="dt">strata =</span> <span class="st">&quot;swang1&quot;</span>, <span class="dt">data =</span> rhcSvy, <span class="dt">test =</span> <span class="ot">FALSE</span>)
+## Show table with SMD
+<span class="kw">print</span>(tabWeighted, <span class="dt">smd =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>                        Stratified by swang1
+                         No RHC           RHC              SMD   
+  n                      1522.89          1520.27                
+  age (mean (sd))          60.82 (17.16)    60.77 (15.79)   0.003
+  sex = Male (%)           875.8 (57.5)     872.3 (57.4)    0.003
+  race (%)                                                  0.009
+     black                 238.1 (15.6)     235.8 (15.5)         
+     other                  94.9 ( 6.2)      97.8 ( 6.4)         
+     white                1189.9 (78.1)    1186.6 (78.1)         
+  edu (mean (sd))          11.80 (3.17)     11.80 (3.09)    0.002
+  income (%)                                                0.004
+     $11-$25k              316.5 (20.8)     317.0 (20.9)         
+     $25-$50k              251.7 (16.5)     250.8 (16.5)         
+     &gt; $50k                127.1 ( 8.3)     128.4 ( 8.4)         
+     Under $11k            827.6 (54.3)     824.1 (54.2)         
+  ninsclas (%)                                              0.014
+     Medicaid              153.7 (10.1)     151.9 (10.0)         
+     Medicare              361.1 (23.7)     369.0 (24.3)         
+     Medicare &amp; Medicaid    91.5 ( 6.0)      91.2 ( 6.0)         
+     No insurance           85.8 ( 5.6)      86.6 ( 5.7)         
+     Private               487.0 (32.0)     482.2 (31.7)         
+     Private &amp; Medicare    343.7 (22.6)     339.3 (22.3)         
+  cat1 (%)                                                  0.017
+     ARF                   685.8 (45.0)     679.9 (44.7)         
+     CHF                   160.1 (10.5)     163.2 (10.7)         
+     Cirrhosis              45.0 ( 3.0)      47.0 ( 3.1)         
+     Colon Cancer            0.9 ( 0.1)       1.0 ( 0.1)         
+     Coma                   79.4 ( 5.2)      77.4 ( 5.1)         
+     COPD                   56.2 ( 3.7)      57.2 ( 3.8)         
+     Lung Cancer             4.2 ( 0.3)       5.0 ( 0.3)         
+     MOSF w/Malignancy     122.4 ( 8.0)     121.5 ( 8.0)         
+     MOSF w/Sepsis         368.9 (24.2)     368.1 (24.2)         
+  das2d3pc (mean (sd))     20.58 (5.45)     20.56 (5.05)    0.005
+  dnr1 = Yes (%)           131.5 ( 8.6)     129.2 ( 8.5)    0.005
+  ca (%)                                                    0.006
+     Metastatic             98.6 ( 6.5)      98.0 ( 6.4)         
+     No                   1160.5 (76.2)    1162.3 (76.5)         
+     Yes                   263.7 (17.3)     259.9 (17.1)         
+  surv2md1 (mean (sd))      0.58 (0.20)      0.58 (0.20)    0.010
+  aps1 (mean (sd))         57.30 (19.53)    57.13 (19.73)   0.008
+  scoma1 (mean (sd))       19.12 (29.10)    19.10 (28.51)   0.001
+  wtkilo1 (mean (sd))      70.19 (26.54)    70.19 (27.30)  &lt;0.001
+  temp1 (mean (sd))        37.63 (1.88)     37.64 (1.74)   &lt;0.001
+  meanbp1 (mean (sd))      73.18 (35.48)    73.22 (35.50)   0.001
+  resp1 (mean (sd))        28.16 (13.84)    28.10 (14.09)   0.004
+  hrt1 (mean (sd))        116.96 (42.74)   116.71 (40.28)   0.006
+  pafi1 (mean (sd))       209.93 (107.48)  210.31 (108.23)  0.004
+  paco21 (mean (sd))       37.56 (10.80)    37.51 (11.59)   0.004
+  ph1 (mean (sd))           7.39 (0.11)      7.39 (0.11)    0.003
+  wblc1 (mean (sd))        15.82 (12.03)    15.69 (12.69)   0.010
+  hema1 (mean (sd))        30.90 (8.10)     30.95 (7.57)    0.007
+  sod1 (mean (sd))        136.54 (7.86)    136.58 (7.38)    0.005
+  pot1 (mean (sd))          4.04 (1.04)      4.05 (0.99)    0.004
+  crea1 (mean (sd))         2.27 (2.31)      2.27 (1.95)   &lt;0.001
+  bili1 (mean (sd))         2.50 (5.37)      2.54 (5.15)    0.008
+  alb1 (mean (sd))          3.04 (0.70)      3.04 (0.97)   &lt;0.001
+  resp = Yes (%)           516.6 (33.9)     512.6 (33.7)    0.004
+  card = Yes (%)           582.2 (38.2)     585.6 (38.5)    0.006
+  neuro = Yes (%)          109.6 ( 7.2)     109.0 ( 7.2)    0.001
+  gastr = Yes (%)          270.3 (17.8)     272.7 (17.9)    0.005
+  renal = Yes (%)           89.5 ( 5.9)      90.7 ( 6.0)    0.004
+  meta = Yes (%)            70.0 ( 4.6)      70.2 ( 4.6)    0.001
+  hema = Yes (%)            93.5 ( 6.1)      95.0 ( 6.2)    0.004
+  seps = Yes (%)           325.5 (21.4)     322.0 (21.2)    0.005
+  trauma = Yes (%)          14.8 ( 1.0)      14.3 ( 0.9)    0.003
+  ortho = Yes (%)            1.0 ( 0.1)       0.9 ( 0.1)    0.003
+  cardiohx (mean (sd))      0.20 (0.40)      0.20 (0.40)   &lt;0.001
+  chfhx (mean (sd))         0.20 (0.40)      0.20 (0.40)    0.004
+  dementhx (mean (sd))      0.08 (0.26)      0.08 (0.26)    0.003
+  psychhx (mean (sd))       0.05 (0.23)      0.05 (0.22)    0.004
+  chrpulhx (mean (sd))      0.16 (0.36)      0.16 (0.36)    0.001
+  renalhx (mean (sd))       0.05 (0.22)      0.05 (0.22)    0.001
+  liverhx (mean (sd))       0.07 (0.25)      0.07 (0.25)    0.003
+  gibledhx (mean (sd))      0.03 (0.17)      0.03 (0.17)    0.007
+  malighx (mean (sd))       0.23 (0.42)      0.23 (0.42)    0.007
+  immunhx (mean (sd))       0.28 (0.45)      0.28 (0.45)   &lt;0.001
+  transhx (mean (sd))       0.12 (0.33)      0.12 (0.33)    0.004
+  amihx (mean (sd))         0.03 (0.18)      0.03 (0.18)    0.006</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Count covariates with important imbalance
+<span class="kw">addmargins</span>(<span class="kw">table</span>(<span class="kw">ExtractSmd</span>(tabWeighted) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.1</span>))</code></pre></div>
+<pre><code>
+FALSE   Sum 
+   50    50 </code></pre>
+</div>
+<div id="assessing-balance-before-and-after-matchingweighting" class="section level2">
+<h2>Assessing balance before and after matching/weighting</h2>
+<p>A plot showing covariate balance is often constructed to demonstrate the balancing effect of matching and/or weighting. Given the same propensity score model, the matching weight method often achieves better covariate balance than matching.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Construct a data frame containing variable name and SMD from all methods
+dataPlot &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">variable  =</span> vars,
+                       <span class="dt">Unmatched =</span> <span class="kw">unname</span>(<span class="kw">ExtractSmd</span>(tabUnmatched)),
+                       <span class="dt">Matched   =</span> <span class="kw">unname</span>(<span class="kw">ExtractSmd</span>(tabMatched)),
+                       <span class="dt">Weighted  =</span> <span class="kw">unname</span>(<span class="kw">ExtractSmd</span>(tabWeighted)))
+
+## Create long-format data for ggplot2
+dataPlotMelt &lt;-<span class="st"> </span><span class="kw">melt</span>(<span class="dt">data          =</span> dataPlot,
+                     <span class="dt">id.vars       =</span> <span class="kw">c</span>(<span class="st">&quot;variable&quot;</span>),
+                     <span class="dt">variable.name =</span> <span class="st">&quot;Method&quot;</span>,
+                     <span class="dt">value.name    =</span> <span class="st">&quot;SMD&quot;</span>)
+
+## Order variable names by magnitude of SMD
+varNames &lt;-<span class="st"> </span><span class="kw">as.character</span>(dataPlot<span class="op">$</span>variable)[<span class="kw">order</span>(dataPlot<span class="op">$</span>Unmatched)]
+
+## Order factor levels in the same order
+dataPlotMelt<span class="op">$</span>variable &lt;-<span class="st"> </span><span class="kw">factor</span>(dataPlotMelt<span class="op">$</span>variable,
+                                <span class="dt">levels =</span> varNames)
+
+## Plot using ggplot2
+<span class="kw">ggplot</span>(<span class="dt">data =</span> dataPlotMelt, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> variable, <span class="dt">y =</span> SMD,
+                                          <span class="dt">group =</span> Method, <span class="dt">color =</span> Method)) <span class="op">+</span>
+<span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">0.1</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">size =</span> <span class="fl">0.1</span>) <span class="op">+</span>
+<span class="kw">coord_flip</span>() <span class="op">+</span>
+<span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.key =</span> <span class="kw">element_blank</span>())</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>To construct a side-by-side table, data can be extracted as a matrix and combined using the print() method, which actually invisibly returns a matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Column bind tables
+resCombo &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">print</span>(tabUnmatched, <span class="dt">printToggle =</span> <span class="ot">FALSE</span>),
+                  <span class="kw">print</span>(tabMatched,   <span class="dt">printToggle =</span> <span class="ot">FALSE</span>),
+                  <span class="kw">print</span>(tabWeighted,  <span class="dt">printToggle =</span> <span class="ot">FALSE</span>))
+
+## Add group name row, and rewrite column names
+resCombo &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="dt">Group =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;No RHC&quot;</span>,<span class="st">&quot;RHC&quot;</span>), <span class="dv">3</span>), resCombo)
+<span class="kw">colnames</span>(resCombo) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Unmatched&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;Matched&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;Weighted&quot;</span>,<span class="st">&quot;&quot;</span>)
+<span class="kw">print</span>(resCombo, <span class="dt">quote =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>                       Unmatched                       Matched                         Weighted                         
+Group                  No RHC          RHC             No RHC          RHC             No RHC           RHC             
+n                        3551            2184            1563            1563          1522.89          1520.27         
+age (mean (sd))         61.76 (17.29)   60.75 (15.63)   60.67 (17.38)   60.56 (15.72)    60.82 (17.16)    60.77 (15.79) 
+sex = Male (%)           1914 (53.9)     1278 (58.5)      882 (56.4)      892 (57.1)     875.8 (57.5)     872.3 (57.4)  
+race (%)                                                                                                                
+   black                  585 (16.5)      335 (15.3)      241 (15.4)      248 (15.9)     238.1 (15.6)     235.8 (15.5)  
+   other                  213 ( 6.0)      142 ( 6.5)      104 ( 6.7)       99 ( 6.3)      94.9 ( 6.2)      97.8 ( 6.4)  
+   white                 2753 (77.5)     1707 (78.2)     1218 (77.9)     1216 (77.8)    1189.9 (78.1)    1186.6 (78.1)  
+edu (mean (sd))         11.57 (3.13)    11.86 (3.16)    11.83 (3.16)    11.78 (3.16)     11.80 (3.17)     11.80 (3.09)  
+income (%)                                                                                                              
+   $11-$25k               713 (20.1)      452 (20.7)      317 (20.3)      336 (21.5)     316.5 (20.8)     317.0 (20.9)  
+   $25-$50k               500 (14.1)      393 (18.0)      251 (16.1)      262 (16.8)     251.7 (16.5)     250.8 (16.5)  
+   &gt; $50k                 257 ( 7.2)      194 ( 8.9)      137 ( 8.8)      124 ( 7.9)     127.1 ( 8.3)     128.4 ( 8.4)  
+   Under $11k            2081 (58.6)     1145 (52.4)      858 (54.9)      841 (53.8)     827.6 (54.3)     824.1 (54.2)  
+ninsclas (%)                                                                                                            
+   Medicaid               454 (12.8)      193 ( 8.8)      154 ( 9.9)      152 ( 9.7)     153.7 (10.1)     151.9 (10.0)  
+   Medicare               947 (26.7)      511 (23.4)      370 (23.7)      371 (23.7)     361.1 (23.7)     369.0 (24.3)  
+   Medicare &amp; Medicaid    251 ( 7.1)      123 ( 5.6)       91 ( 5.8)       94 ( 6.0)      91.5 ( 6.0)      91.2 ( 6.0)  
+   No insurance           186 ( 5.2)      136 ( 6.2)       83 ( 5.3)       90 ( 5.8)      85.8 ( 5.6)      86.6 ( 5.7)  
+   Private                967 (27.2)      731 (33.5)      514 (32.9)      498 (31.9)     487.0 (32.0)     482.2 (31.7)  
+   Private &amp; Medicare     746 (21.0)      490 (22.4)      351 (22.5)      358 (22.9)     343.7 (22.6)     339.3 (22.3)  
+cat1 (%)                                                                                                                
+   ARF                   1581 (44.5)      909 (41.6)      713 (45.6)      680 (43.5)     685.8 (45.0)     679.9 (44.7)  
+   CHF                    247 ( 7.0)      209 ( 9.6)      171 (10.9)      175 (11.2)     160.1 (10.5)     163.2 (10.7)  
+   Cirrhosis              175 ( 4.9)       49 ( 2.2)       46 ( 2.9)       47 ( 3.0)      45.0 ( 3.0)      47.0 ( 3.1)  
+   Colon Cancer             6 ( 0.2)        1 ( 0.0)        1 ( 0.1)        1 ( 0.1)       0.9 ( 0.1)       1.0 ( 0.1)  
+   Coma                   341 ( 9.6)       95 ( 4.3)       82 ( 5.2)       76 ( 4.9)      79.4 ( 5.2)      77.4 ( 5.1)  
+   COPD                   399 (11.2)       58 ( 2.7)       49 ( 3.1)       57 ( 3.6)      56.2 ( 3.7)      57.2 ( 3.8)  
+   Lung Cancer             34 ( 1.0)        5 ( 0.2)        3 ( 0.2)        5 ( 0.3)       4.2 ( 0.3)       5.0 ( 0.3)  
+   MOSF w/Malignancy      241 ( 6.8)      158 ( 7.2)      125 ( 8.0)      128 ( 8.2)     122.4 ( 8.0)     121.5 ( 8.0)  
+   MOSF w/Sepsis          527 (14.8)      700 (32.1)      373 (23.9)      394 (25.2)     368.9 (24.2)     368.1 (24.2)  
+das2d3pc (mean (sd))    20.37 (5.48)    20.70 (5.03)    20.54 (5.44)    20.58 (5.08)     20.58 (5.45)     20.56 (5.05)  
+dnr1 = Yes (%)            499 (14.1)      155 ( 7.1)      133 ( 8.5)      130 ( 8.3)     131.5 ( 8.6)     129.2 ( 8.5)  
+ca (%)                                                                                                                  
+   Metastatic             261 ( 7.4)      123 ( 5.6)       99 ( 6.3)       98 ( 6.3)      98.6 ( 6.5)      98.0 ( 6.4)  
+   No                    2652 (74.7)     1727 (79.1)     1205 (77.1)     1194 (76.4)    1160.5 (76.2)    1162.3 (76.5)  
+   Yes                    638 (18.0)      334 (15.3)      259 (16.6)      271 (17.3)     263.7 (17.3)     259.9 (17.1)  
+surv2md1 (mean (sd))     0.61 (0.19)     0.57 (0.20)     0.58 (0.21)     0.59 (0.20)      0.58 (0.20)      0.58 (0.20)  
+aps1 (mean (sd))        50.93 (18.81)   60.74 (20.27)   57.25 (19.73)   57.27 (19.66)    57.30 (19.53)    57.13 (19.73) 
+scoma1 (mean (sd))      22.25 (31.37)   18.97 (28.26)   19.38 (28.93)   18.85 (28.25)    19.12 (29.10)    19.10 (28.51) 
+wtkilo1 (mean (sd))     65.04 (29.50)   72.36 (27.73)   69.69 (26.77)   70.73 (27.19)    70.19 (26.54)    70.19 (27.30) 
+temp1 (mean (sd))       37.63 (1.74)    37.59 (1.83)    37.64 (1.88)    37.62 (1.74)     37.63 (1.88)     37.64 (1.74)  
+meanbp1 (mean (sd))     84.87 (38.87)   68.20 (34.24)   73.16 (35.38)   73.09 (35.73)    73.18 (35.48)    73.22 (35.50) 
+resp1 (mean (sd))       28.98 (13.95)   26.65 (14.17)   28.12 (13.87)   28.07 (14.17)    28.16 (13.84)    28.10 (14.09) 
+hrt1 (mean (sd))       112.87 (40.94)  118.93 (41.47)  116.86 (42.19)  117.76 (40.24)   116.96 (42.74)   116.71 (40.28) 
+pafi1 (mean (sd))      240.63 (116.66) 192.43 (105.54) 210.14 (106.99) 211.43 (107.97)  209.93 (107.48)  210.31 (108.23)
+paco21 (mean (sd))      39.95 (14.24)   36.79 (10.97)   37.60 (10.83)   37.43 (11.51)    37.56 (10.80)    37.51 (11.59) 
+ph1 (mean (sd))          7.39 (0.11)     7.38 (0.11)     7.39 (0.11)     7.39 (0.11)      7.39 (0.11)      7.39 (0.11)  
+wblc1 (mean (sd))       15.26 (11.41)   16.27 (12.55)   15.49 (11.45)   15.93 (13.00)    15.82 (12.03)    15.69 (12.69) 
+hema1 (mean (sd))       32.70 (8.79)    30.51 (7.42)    30.67 (8.10)    30.90 (7.54)     30.90 (8.10)     30.95 (7.57)  
+sod1 (mean (sd))       137.04 (7.68)   136.33 (7.60)   136.59 (7.91)   136.64 (7.43)    136.54 (7.86)    136.58 (7.38)  
+pot1 (mean (sd))         4.08 (1.04)     4.05 (1.01)     4.04 (1.04)     4.05 (0.99)      4.04 (1.04)      4.05 (0.99)  
+crea1 (mean (sd))        1.92 (2.03)     2.47 (2.05)     2.30 (2.42)     2.28 (1.97)      2.27 (2.31)      2.27 (1.95)  
+bili1 (mean (sd))        2.00 (4.43)     2.71 (5.33)     2.59 (5.62)     2.55 (5.09)      2.50 (5.37)      2.54 (5.15)  
+alb1 (mean (sd))         3.16 (0.67)     2.98 (0.93)     3.03 (0.70)     3.04 (0.96)      3.04 (0.70)      3.04 (0.97)  
+resp = Yes (%)           1481 (41.7)      632 (28.9)      531 (34.0)      519 (33.2)     516.6 (33.9)     512.6 (33.7)  
+card = Yes (%)           1007 (28.4)      924 (42.3)      597 (38.2)      598 (38.3)     582.2 (38.2)     585.6 (38.5)  
+neuro = Yes (%)           575 (16.2)      118 ( 5.4)      119 ( 7.6)      109 ( 7.0)     109.6 ( 7.2)     109.0 ( 7.2)  
+gastr = Yes (%)           522 (14.7)      420 (19.2)      283 (18.1)      291 (18.6)     270.3 (17.8)     272.7 (17.9)  
+renal = Yes (%)           147 ( 4.1)      148 ( 6.8)       92 ( 5.9)       94 ( 6.0)      89.5 ( 5.9)      90.7 ( 6.0)  
+meta = Yes (%)            172 ( 4.8)       93 ( 4.3)       69 ( 4.4)       74 ( 4.7)      70.0 ( 4.6)      70.2 ( 4.6)  
+hema = Yes (%)            239 ( 6.7)      115 ( 5.3)      103 ( 6.6)       97 ( 6.2)      93.5 ( 6.1)      95.0 ( 6.2)  
+seps = Yes (%)            515 (14.5)      516 (23.6)      337 (21.6)      332 (21.2)     325.5 (21.4)     322.0 (21.2)  
+trauma = Yes (%)           18 ( 0.5)       34 ( 1.6)       13 ( 0.8)       13 ( 0.8)      14.8 ( 1.0)      14.3 ( 0.9)  
+ortho = Yes (%)             3 ( 0.1)        4 ( 0.2)        1 ( 0.1)        1 ( 0.1)       1.0 ( 0.1)       0.9 ( 0.1)  
+cardiohx (mean (sd))     0.16 (0.37)     0.20 (0.40)     0.20 (0.40)     0.20 (0.40)      0.20 (0.40)      0.20 (0.40)  
+chfhx (mean (sd))        0.17 (0.37)     0.19 (0.40)     0.20 (0.40)     0.20 (0.40)      0.20 (0.40)      0.20 (0.40)  
+dementhx (mean (sd))     0.12 (0.32)     0.07 (0.25)     0.08 (0.28)     0.07 (0.26)      0.08 (0.26)      0.08 (0.26)  
+psychhx (mean (sd))      0.08 (0.27)     0.05 (0.21)     0.05 (0.22)     0.05 (0.23)      0.05 (0.23)      0.05 (0.22)  
+chrpulhx (mean (sd))     0.22 (0.41)     0.14 (0.35)     0.15 (0.36)     0.15 (0.36)      0.16 (0.36)      0.16 (0.36)  
+renalhx (mean (sd))      0.04 (0.20)     0.05 (0.21)     0.05 (0.23)     0.05 (0.22)      0.05 (0.22)      0.05 (0.22)  
+liverhx (mean (sd))      0.07 (0.26)     0.06 (0.24)     0.07 (0.25)     0.07 (0.26)      0.07 (0.25)      0.07 (0.25)  
+gibledhx (mean (sd))     0.04 (0.19)     0.02 (0.16)     0.03 (0.17)     0.03 (0.17)      0.03 (0.17)      0.03 (0.17)  
+malighx (mean (sd))      0.25 (0.43)     0.20 (0.40)     0.23 (0.42)     0.23 (0.42)      0.23 (0.42)      0.23 (0.42)  
+immunhx (mean (sd))      0.26 (0.44)     0.29 (0.45)     0.29 (0.45)     0.28 (0.45)      0.28 (0.45)      0.28 (0.45)  
+transhx (mean (sd))      0.09 (0.29)     0.15 (0.36)     0.13 (0.33)     0.12 (0.33)      0.12 (0.33)      0.12 (0.33)  
+amihx (mean (sd))        0.03 (0.17)     0.04 (0.20)     0.03 (0.17)     0.03 (0.17)      0.03 (0.18)      0.03 (0.18)  </code></pre>
+</div>
+<div id="outcome-analysis" class="section level2">
+<h2>Outcome analysis</h2>
+<p>The final analysis can be conducted using matched and weighted data. The results from the matching and matching weight are similar. ShowRegTable() function may come in handly.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Unmatched model (unadjsuted)
+glmUnmatched &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> (death <span class="op">==</span><span class="st"> &quot;Yes&quot;</span>) <span class="op">~</span><span class="st"> </span>swang1,
+                    <span class="dt">family  =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>),
+                    <span class="dt">data    =</span> rhc)
+## Matched model
+glmMatched &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> (death <span class="op">==</span><span class="st"> &quot;Yes&quot;</span>) <span class="op">~</span><span class="st"> </span>swang1,
+                  <span class="dt">family  =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>),
+                  <span class="dt">data    =</span> rhcMatched)
+## Weighted model
+glmWeighted &lt;-<span class="st"> </span><span class="kw">svyglm</span>(<span class="dt">formula =</span> (death <span class="op">==</span><span class="st"> &quot;Yes&quot;</span>) <span class="op">~</span><span class="st"> </span>swang1,
+                      <span class="dt">family  =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>),
+                      <span class="dt">design    =</span> rhcSvy)
+
+## Show results together
+resTogether &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">Unmatched =</span> <span class="kw">ShowRegTable</span>(glmUnmatched, <span class="dt">printToggle =</span> <span class="ot">FALSE</span>),
+                    <span class="dt">Matched   =</span> <span class="kw">ShowRegTable</span>(glmMatched, <span class="dt">printToggle =</span> <span class="ot">FALSE</span>),
+                    <span class="dt">Weighted  =</span> <span class="kw">ShowRegTable</span>(glmWeighted, <span class="dt">printToggle =</span> <span class="ot">FALSE</span>))
+<span class="kw">print</span>(resTogether, <span class="dt">quote =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>$Unmatched
+            exp(coef) [confint] p     
+(Intercept) 1.70 [1.59, 1.82]   &lt;0.001
+swang1RHC   1.25 [1.12, 1.40]   &lt;0.001
+
+$Matched
+            exp(coef) [confint] p     
+(Intercept) 1.75 [1.58, 1.94]   &lt;0.001
+swang1RHC   1.28 [1.11, 1.49]    0.001
+
+$Weighted
+            exp(coef) [confint] p     
+(Intercept) 1.70 [1.56, 1.85]   &lt;0.001
+swang1RHC   1.31 [1.14, 1.49]   &lt;0.001</code></pre>
+<hr />
+<ul>
+<li>Authored by Kazuki Yoshida</li>
+<li>CRAN page: <a href="https://cran.r-project.org/package=tableone" class="uri">https://cran.r-project.org/package=tableone</a></li>
+<li>github page: <a href="https://github.com/kaz-yos/tableone" class="uri">https://github.com/kaz-yos/tableone</a></li>
+</ul>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
